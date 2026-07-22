@@ -1,0 +1,226 @@
+/*
+ * Theme tokens for the solid-ui components in src/components/ui.
+ * Generated once by scripts/setup-ui.mjs — hand-tune freely; the script will not
+ * overwrite this file unless run with --force.
+ *
+ * Colours are HSL triplets (no hsl() wrapper) so Tailwind's opacity modifiers
+ * (bg-primary/90) keep working.
+ *
+ * PROVISIONAL PALETTE: docs/00-vision-and-principles.md calls for colour-coded
+ * actions but does not specify hex values, so the red / amber / green below are
+ * a starting point, not a spec. Replace once the design direction is fixed.
+ *
+ * Convention inherited from solid-ui: --destructive is a *solid* fill (buttons),
+ * while --success / --warning / --error / --info are pale surfaces paired with a
+ * saturated foreground (badges, callouts, alerts).
+ */
+
+@custom-variant dark (&:where(.dark, .dark *, [data-kb-theme="dark"], [data-kb-theme="dark"] *));
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+
+  /* NAJDA red — primary action / brand */
+  --primary: 0 72% 45%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+
+  /* Deeper than --primary so "delete" never reads as "submit" */
+  --destructive: 0 74% 32%;
+  --destructive-foreground: 0 0% 98%;
+
+  /* Status surfaces: pale background + saturated foreground */
+  --success: 142 76% 92%;
+  --success-foreground: 142 71% 29%;
+
+  --warning: 45 100% 90%;
+  --warning-foreground: 32 95% 34%;
+
+  --error: 0 93% 94%;
+  --error-foreground: 0 74% 38%;
+
+  --info: 204 94% 94%;
+  --info-foreground: 201 90% 35%;
+
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 0 72% 45%;
+
+  --radius: 0.5rem;
+
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 240 10% 3.9%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 240 5.9% 90%;
+  --sidebar-ring: 0 72% 45%;
+}
+
+/* Kobalte writes [data-kb-theme]; .dark is here for manual toggles. */
+.dark,
+[data-kb-theme="dark"] {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+
+  --primary: 0 72% 51%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 62% 40%;
+  --destructive-foreground: 0 0% 98%;
+
+  --success: 142 70% 16%;
+  --success-foreground: 142 69% 70%;
+
+  --warning: 32 80% 16%;
+  --warning-foreground: 45 93% 66%;
+
+  --error: 0 63% 18%;
+  --error-foreground: 0 91% 76%;
+
+  --info: 201 90% 16%;
+  --info-foreground: 199 95% 74%;
+
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 0 72% 51%;
+
+  --sidebar: 240 6% 10%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 0 72% 51%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+
+  --color-error: hsl(var(--error));
+  --color-error-foreground: hsl(var(--error-foreground));
+
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-content-show: content-show 0.2s ease-out;
+  --animate-content-hide: content-hide 0.2s ease-out;
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--kb-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--kb-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes content-show {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes content-hide {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.96); }
+}
+
+@keyframes caret-blink {
+  0%, 70%, 100% { opacity: 1; }
+  20%, 50% { opacity: 0; }
+}
+
+@layer base {
+  /* Tailwind v4 defaults the border colour to currentColor; the components
+     assume the v3 behaviour of a themed default. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

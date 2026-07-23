@@ -1,10 +1,11 @@
-use std::env;
+use std::{env, path::PathBuf};
 
 #[derive(Debug, Clone)]
 pub struct Config {
     pub port: u16,
     pub database_url: String,
     pub redis_url: String,
+    pub upload_dir: PathBuf,
 }
 
 impl Config {
@@ -22,10 +23,14 @@ impl Config {
         })?;
         let redis_url = env::var("REDIS_URL")
             .map_err(|_| "REDIS_URL is not set (e.g. redis://localhost:6379)".to_string())?;
+        let upload_dir = env::var("UPLOAD_DIR")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| PathBuf::from("uploads"));
         Ok(Self {
             port,
             database_url,
             redis_url,
+            upload_dir,
         })
     }
 }

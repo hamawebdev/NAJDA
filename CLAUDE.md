@@ -1,8 +1,10 @@
 # NAJDA — repo guide
 
-Wildfire emergency coordination platform for Algeria. **`docs/` is the product source
-of truth — read the relevant module spec in `docs/modules/` before implementing any
-feature.** Do not modify `docs/`.
+Najda: wildfire emergency coordination platform for Algeria. Six sections only —
+Home, Volunteer Groups, Firefighting Volunteers, Resource Volunteers, Affected
+Families, Missing Persons. Philosophy: simplicity over complexity; every task done
+in under a minute; no accounts except Group Leaders. (The old `docs/` spec was
+retired and deleted — the product brief above is the source of truth.)
 
 ## Layout
 
@@ -32,11 +34,16 @@ Tests pass without Docker/Postgres/Redis running (they use lazy pools).
   forwards these to the backend. Server-side code calls the backend directly via
   `API_INTERNAL_URL` (see `frontend/src/lib/api.ts` — use `apiFetch`). Never hardcode
   `localhost:8080` in app code.
-- **Backend config from env only**: `PORT` (default 8080), `DATABASE_URL`, `REDIS_URL`
-  — parsed in `backend/crates/api/src/config.rs`; the process fails fast at startup if
-  Postgres or Redis is unreachable.
-- **Shared state**: `AppState { db: PgPool, redis: deadpool_redis::Pool }` in `state.rs`;
-  routes live in `routes.rs` behind `router(state)`.
+- **Backend config from env only**: `PORT` (default 8080), `DATABASE_URL`, `REDIS_URL`,
+  `UPLOAD_DIR` — parsed in `backend/crates/api/src/config.rs`; the process fails fast at
+  startup if Postgres or Redis is unreachable.
+- **Shared state**: `AppState { db: PgPool, redis: deadpool_redis::Pool, upload_dir }`
+  in `state.rs`; `routes.rs` is router assembly only, handlers live in `src/handlers/`.
+- **Errors**: handlers return `(StatusCode, String)` where the string is a stable message
+  key (e.g. `invalid_phone`) that the frontend maps to translated text (`tError`).
+- **i18n**: Arabic (RTL, default) + French. UI strings live in
+  `frontend/src/lib/i18n/{ar,fr}.ts`; `ar.ts` defines the key set. Locale persists in
+  the `najda_locale` cookie. Use logical Tailwind utilities (`ms-`/`me-`) for RTL.
 - **sqlx**: use runtime-checked `sqlx::query`/`query_as` — NOT the compile-time macros
   (`query!`) — so builds never need a live database.
 - **Migrations**: timestamped `.sql` files in `backend/migrations/`, embedded via

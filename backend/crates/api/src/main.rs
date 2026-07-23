@@ -48,7 +48,20 @@ async fn run() -> Result<(), String> {
         .map_err(|e| format!("Redis PING failed: {e}"))?;
     drop(conn);
 
-    let app = routes::router(AppState { db, redis });
+    tokio::fs::create_dir_all(&config.upload_dir)
+        .await
+        .map_err(|e| {
+            format!(
+                "cannot create upload dir {}: {e}",
+                config.upload_dir.display()
+            )
+        })?;
+
+    let app = routes::router(AppState {
+        db,
+        redis,
+        upload_dir: config.upload_dir.clone(),
+    });
 
     let addr = format!("0.0.0.0:{}", config.port);
     let listener = tokio::net::TcpListener::bind(&addr)

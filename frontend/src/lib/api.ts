@@ -13,14 +13,55 @@ export function apiBase(): string {
 }
 
 /**
- * Fetch a backend API endpoint and parse the JSON body. Works both in the
- * browser (relative path) and during SSR (via `API_INTERNAL_URL`). Non-2xx
- * responses with a JSON body (e.g. the 503 "degraded" health payload) still
- * resolve to the parsed body.
+ * Error thrown for non-2xx API responses. `message` is the backend's stable
+ * message key (e.g. `invalid_phone`), which the UI maps to a translated string.
  */
-export async function apiFetch<T>(path: string): Promise<T> {
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+export interface ApiFetchOptions {
+  method?: "GET" | "POST";
+  /** JSON-encoded request body (sets content-type). Ignored when formData is set. */
+  body?: unknown;
+  /** Multipart body (browser sets the boundary content-type itself). */
+  formData?: FormData;
+  headers?: Record<string, string>;
+}
+
+/**
+ * Fetch a backend API endpoint and parse the JSON body. Works both in the
+ * browser (relative path) and during SSR (via `API_INTERNAL_URL`).
+ * Non-2xx responses throw an {@link ApiError} carrying the backend's message.
+ */
+export async function apiFetch<T>(path: string, opts: ApiFetchOptions = {}): Promise<T> {
+  const headers: Record<string, string> = { accept: "application/json", ...opts.headers };
+  let body: BodyInit | undefined;
+  if (opts.formData) {
+    body = opts.formData;
+  } else if (opts.body !== undefined) {
+    headers["content-type"] = "application/json";
+    body = JSON.stringify(opts.body);
+  }
+
   const res = await fetch(`${apiBase()}${path}`, {
-    headers: { accept: "application/json" },
+    method: opts.method ?? "GET",
+    headers,
+    body,
+    credentials: "same-origin",
   });
+
+  if (!res.ok) {
+    throw new ApiError(res.status, (await res.text()) || `http_${res.status}`);
+  }
+  if (res.status === 204) {
+    return undefined as T;
+  }
   return (await res.json()) as T;
 }

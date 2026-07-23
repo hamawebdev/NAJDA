@@ -6,9 +6,8 @@
  * Colours are HSL triplets (no hsl() wrapper) so Tailwind's opacity modifiers
  * (bg-primary/90) keep working.
  *
- * PROVISIONAL PALETTE: docs/00-vision-and-principles.md calls for colour-coded
- * actions but does not specify hex values, so the red / amber / green below are
- * a starting point, not a spec. Replace once the design direction is fixed.
+ * Palette: NAJDA red as the single accent on a neutral zinc base, calibrated
+ * for a calm, trustworthy emergency service (WCAG AA on all text pairings).
  *
  * Convention inherited from solid-ui: --destructive is a *solid* fill (buttons),
  * while --success / --warning / --error / --info are pale surfaces paired with a
@@ -18,11 +17,12 @@
 @custom-variant dark (&:where(.dark, .dark *, [data-kb-theme="dark"], [data-kb-theme="dark"] *));
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  /* Off-white canvas so white cards read as gentle elevation. */
+  --background: 240 20% 98%;
+  --foreground: 240 10% 8%;
 
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 240 10% 8%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
@@ -57,11 +57,12 @@
   --info: 204 94% 94%;
   --info-foreground: 201 90% 35%;
 
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
+  --border: 240 6% 88%;
+  --input: 240 6% 84%;
   --ring: 0 72% 45%;
 
-  --radius: 0.5rem;
+  /* One radius system: controls use --radius (12px), cards use --radius + 4px. */
+  --radius: 0.75rem;
 
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 10% 3.9%;
@@ -74,11 +75,11 @@
 /* Kobalte writes [data-kb-theme]; .dark is here for manual toggles. */
 .dark,
 [data-kb-theme="dark"] {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
+  --background: 240 10% 5%;
+  --foreground: 0 0% 97%;
 
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
+  --card: 240 8% 9%;
+  --card-foreground: 0 0% 97%;
 
   --popover: 240 10% 3.9%;
   --popover-foreground: 0 0% 98%;

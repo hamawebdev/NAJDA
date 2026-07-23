@@ -18,7 +18,11 @@ fn state_without_backends() -> AppState {
     let redis = deadpool_redis::Config::from_url("redis://127.0.0.1:1")
         .create_pool(Some(deadpool_redis::Runtime::Tokio1))
         .expect("lazy redis pool");
-    AppState { db, redis }
+    AppState {
+        db,
+        redis,
+        upload_dir: std::env::temp_dir(),
+    }
 }
 
 #[tokio::test]

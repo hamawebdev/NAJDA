@@ -1,110 +1,87 @@
-import { For, Show, createResource } from "solid-js";
-import { apiFetch } from "~/lib/api";
+import { A } from "@solidjs/router";
+import type { IconTypes } from "solid-icons";
+import {
+  TbOutlineArrowLeft,
+  TbOutlineArrowRight,
+  TbOutlineHeartHandshake,
+  TbOutlinePackage,
+  TbOutlineSearch,
+  TbOutlineShieldPlus,
+  TbOutlineUsersGroup,
+} from "solid-icons/tb";
+import { For } from "solid-js";
 
-type Health = {
-  status: "ok" | "degraded";
-  postgres: "ok" | "error";
-  redis: "ok" | "error";
-};
+import { type MessageKey, useI18n } from "~/lib/i18n";
 
-type Wilaya = { code: number; name_ar: string; name_fr: string; name_en: string };
-
-const getHealth = async (): Promise<Health | null> => {
-  try {
-    return await apiFetch<Health>("/api/health");
-  } catch {
-    return null;
-  }
-};
-
-const getWilayas = async (): Promise<Wilaya[] | null> => {
-  try {
-    return await apiFetch<Wilaya[]>("/api/wilayas");
-  } catch {
-    return null;
-  }
-};
-
-function StatusChip(props: { label: string; value: string | undefined }) {
-  const color = () =>
-    props.value === "ok"
-      ? "bg-green-100 text-green-800 border-green-300"
-      : "bg-red-100 text-red-800 border-red-300";
-  return (
-    <span class={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium ${color()}`}>
-      {props.label}: {props.value ?? "unreachable"}
-    </span>
-  );
+interface Action {
+  href: string;
+  icon: IconTypes;
+  title: MessageKey;
+  desc: MessageKey;
+  /** Primary actions get the strongest visual weight. */
+  primary?: boolean;
+  wide?: boolean;
 }
 
+const ACTIONS: Action[] = [
+  { href: "/help/new", icon: TbOutlineHeartHandshake, title: "home.requestHelp", desc: "home.requestHelpDesc", primary: true, wide: true },
+  { href: "/groups", icon: TbOutlineUsersGroup, title: "home.joinGroup", desc: "home.joinGroupDesc", primary: true, wide: true },
+  { href: "/groups/new", icon: TbOutlineShieldPlus, title: "home.createGroup", desc: "home.createGroupDesc" },
+  { href: "/resources/new", icon: TbOutlinePackage, title: "home.offerResources", desc: "home.offerResourcesDesc" },
+  { href: "/missing/new", icon: TbOutlineSearch, title: "home.reportMissing", desc: "home.reportMissingDesc" },
+];
+
 export default function Home() {
-  const [health, { refetch }] = createResource(getHealth);
-  const [wilayas] = createResource(getWilayas);
+  const { t, locale } = useI18n();
+  const Arrow = () => (locale() === "ar" ? <TbOutlineArrowLeft size={22} /> : <TbOutlineArrowRight size={22} />);
 
   return (
-    <main class="mx-auto max-w-2xl p-6">
-      <header class="my-10 text-center">
-        <h1 class="text-5xl font-bold text-emerald-800">
-          NAJDA <span dir="rtl">نجدة</span>
+    <div class="space-y-10 py-4">
+      <section class="mx-auto max-w-2xl space-y-4 text-center">
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+          {t("home.title")}
         </h1>
-        <p class="mt-3 text-gray-600">
-          National wildfire emergency coordination platform for Algeria.
-        </p>
-      </header>
-
-      <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-gray-800">System status</h2>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            class="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
-          >
-            Refresh
-          </button>
-        </div>
-        <p class="mt-1 text-sm text-gray-500">
-          Live response from <code class="rounded bg-gray-100 px-1">GET /api/health</code>
-        </p>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <StatusChip label="api" value={health() ? health()!.status : undefined} />
-          <StatusChip label="postgres" value={health()?.postgres} />
-          <StatusChip label="redis" value={health()?.redis} />
-        </div>
+        <p class="text-lg leading-relaxed text-muted-foreground">{t("home.intro")}</p>
       </section>
 
-      <section class="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-gray-800">Wilayas</h2>
-        <p class="mt-1 text-sm text-gray-500">
-          Reference data from <code class="rounded bg-gray-100 px-1">GET /api/wilayas</code>{" "}
-          (seeded by the first migration)
-        </p>
-        <Show
-          when={wilayas()}
-          fallback={<p class="mt-4 text-sm text-red-700">Could not load wilayas — is the backend running?</p>}
-        >
-          {(list) => (
-            <>
-              <p class="mt-4 text-sm text-gray-700">
-                <span class="font-semibold">{list().length}</span> wilayas loaded from Postgres, e.g.
-              </p>
-              <ul class="mt-2 flex flex-wrap gap-2">
-                <For each={list().slice(0, 6)}>
-                  {(w) => (
-                    <li class="rounded-md bg-emerald-50 px-2 py-1 text-sm text-emerald-900">
-                      {String(w.code).padStart(2, "0")} {w.name_fr} · <span dir="rtl">{w.name_ar}</span>
-                    </li>
-                  )}
-                </For>
-              </ul>
-            </>
+      <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <For each={ACTIONS}>
+          {(action) => (
+            <A
+              href={action.href}
+              class="group flex flex-col gap-4 rounded-xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow-md"
+              classList={{
+                "lg:col-span-3 border-primary/30 hover:border-primary": Boolean(action.primary),
+                "lg:col-span-2 hover:border-ring/50": !action.primary,
+                "sm:col-span-2 lg:col-span-2": !action.primary && action.href === "/missing/new",
+              }}
+            >
+              <div class="flex items-center justify-between">
+                <span
+                  class="flex size-13 items-center justify-center rounded-lg transition-colors"
+                  classList={{
+                    "bg-primary text-primary-foreground": Boolean(action.primary),
+                    "bg-primary/10 text-primary": !action.primary,
+                  }}
+                >
+                  <action.icon size={28} aria-hidden="true" />
+                </span>
+                <span class="text-muted-foreground/50 transition-colors group-hover:text-primary">
+                  <Arrow />
+                </span>
+              </div>
+              <div class="space-y-1.5">
+                <h2 class="text-xl font-bold leading-snug">{t(action.title)}</h2>
+                <p class="text-[15px] leading-relaxed text-muted-foreground">{t(action.desc)}</p>
+              </div>
+            </A>
           )}
-        </Show>
+        </For>
       </section>
 
-      <footer class="my-8 text-center text-sm text-gray-400">
-        Product spec lives in <code>docs/</code> — read it before building features.
-      </footer>
-    </main>
+      <p class="mx-auto max-w-xl text-center text-sm leading-relaxed text-muted-foreground">
+        {t("common.tagline")}
+      </p>
+    </div>
   );
 }
